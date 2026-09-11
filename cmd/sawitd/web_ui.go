@@ -78,7 +78,6 @@ const embeddedWebUIHTML = `<!DOCTYPE html>
         .btn:hover { background: var(--accent-hover); }
 
         /* Dashboard View */
-        #dashboard-section { display: none; }
         .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 1.5rem; }
         .card-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; }
@@ -133,7 +132,7 @@ const embeddedWebUIHTML = `<!DOCTYPE html>
         </div>
 
         <!-- DASHBOARD VIEW -->
-        <div id="dashboard-section">
+        <div id="dashboard-section" class="hidden">
             <div class="grid-4">
                 <div class="card">
                     <div class="card-title">CPU Usage</div>
