@@ -53,10 +53,26 @@
 To install SawitOS management stack on any Debian 11/12 server or Raspberry Pi:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sawitos/sawit/main/installer/sawit-install.sh | sudo sh -s -- --profile=container
+curl -fsSL https://raw.githubusercontent.com/Wildanel321/wildsa/main/installer/sawit-install.sh | sudo sh -s -- --profile=container
 ```
 
 *Default Web UI:* `http://<server-ip>:8080` (Credentials: `admin` / `admin123`)
+
+### 🍓 Raspberry Pi 3 Installation Guide (Direct Test)
+
+1. **Clone repo on Raspberry Pi 3 (or transfer compiled binaries)**:
+   ```bash
+   git clone https://github.com/Wildanel321/wildsa.git
+   cd wildsa
+   ```
+2. **Run Installer locally as root**:
+   ```bash
+   sudo ./installer/sawit-install.sh --profile=homelab
+   ```
+3. **If cross-compiling from PC for Raspberry Pi 3**:
+   - 32-bit OS (`armv7l`): `make build-armv7`
+   - 64-bit OS (`aarch64`): `make build-arm64`
+   - Copy `bin/` contents to Raspberry Pi 3 and run `sudo ./installer/sawit-install.sh`
 
 ---
 
@@ -145,11 +161,17 @@ Follow the step-by-step guide: [docs/cloudflare-tunnel.md](docs/cloudflare-tunne
 
 ### Build Go Binaries & Web UI
 ```bash
-# Build Go backends into bin/
+# Build Go backends natively into bin/
 make build
 
-# Cross-compile release binaries for Raspberry Pi / Linux ARM64
+# Cross-compile release binaries for Raspberry Pi 3 (32-bit armv7)
+make build-armv7
+
+# Cross-compile release binaries for Raspberry Pi 3/4/5 (64-bit arm64)
 make build-arm64
+
+# Cross-compile all architectures & package releases
+make dist
 
 # Build Next.js Web UI
 make build-web

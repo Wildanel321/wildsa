@@ -70,6 +70,39 @@ mkdir -p "${CONFIG_DIR}"
 mkdir -p /var/log/sawit
 mkdir -p /run/sawit
 
+# Install binaries if available locally
+echo "[+] Installing SawitOS system binaries for target architecture: ${BINARY_ARCH}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd || echo ".")"
+PARENT_DIR="$(cd "${SCRIPT_DIR}/.." 2>/dev/null && pwd || echo ".")"
+
+BIN_SRC=""
+if [ -f "${PARENT_DIR}/bin/sawitctl" ]; then
+    BIN_SRC="${PARENT_DIR}/bin"
+elif [ -f "${PARENT_DIR}/bin/sawitctl-linux-${BINARY_ARCH}" ]; then
+    BIN_SRC="${PARENT_DIR}/bin"
+elif [ -f "./bin/sawitctl" ]; then
+    BIN_SRC="./bin"
+elif [ -f "./bin/sawitctl-linux-${BINARY_ARCH}" ]; then
+    BIN_SRC="./bin"
+fi
+
+if [ -n "${BIN_SRC}" ]; then
+    echo "[+] Found pre-compiled binaries in ${BIN_SRC}"
+    for b in sawitctl sawitd sawit-agent sawit-health sawit-update; do
+        if [ -f "${BIN_SRC}/${b}" ]; then
+            cp "${BIN_SRC}/${b}" "${INSTALL_PREFIX}/${b}"
+            chmod 0755 "${INSTALL_PREFIX}/${b}"
+            echo "    [✓] Installed ${b}"
+        elif [ -f "${BIN_SRC}/${b}-linux-${BINARY_ARCH}" ]; then
+            cp "${BIN_SRC}/${b}-linux-${BINARY_ARCH}" "${INSTALL_PREFIX}/${b}"
+            chmod 0755 "${INSTALL_PREFIX}/${b}"
+            echo "    [✓] Installed ${b} (from ${b}-linux-${BINARY_ARCH})"
+        fi
+    done
+else
+    echo "[!] Notice: Pre-compiled binaries not found in ./bin/. Run 'make build' or 'make build-armv7' (for Pi 3 32-bit) / 'make build-arm64' (for Pi 3 64-bit)"
+fi
+
 # Create default configuration files if not present
 if [ ! -f "${CONFIG_DIR}/sawitd.yaml" ]; then
     echo "[+] Writing default configuration to ${CONFIG_DIR}/sawitd.yaml"
@@ -157,9 +190,10 @@ if command -v systemctl >/dev/null 2>&1; then
 fi
 
 echo "================================================================"
-echo " [✓] SawitOS installation structure complete!"
+echo " [✓] SawitOS installation complete for ${BINARY_ARCH}!"
 echo " Binaries directory: ${INSTALL_PREFIX}"
 echo " Config directory:   ${CONFIG_DIR}"
 echo " Default Web UI:     http://<server-ip>:8080"
 echo " Initial Login:      admin / admin123"
 echo "================================================================"
+

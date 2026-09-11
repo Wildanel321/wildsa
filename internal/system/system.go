@@ -212,12 +212,6 @@ func calculateLinuxCPUUsage() float64 {
 	return float64(busy) / float64(total) * 100.0
 }
 
-func getDiskUsageLinux(path string) (totalBytes uint64, freeBytes uint64) {
-	// For Linux, read /proc/mounts or statvfs
-	// Default placeholder fallback for safe non-cgo code:
-	return 100 * 1024 * 1024 * 1024, 60 * 1024 * 1024 * 1024
-}
-
 // FormatUptime converts seconds to human readable string (e.g., "5d 12h 30m")
 func FormatUptime(seconds uint64) string {
 	days := seconds / 86400

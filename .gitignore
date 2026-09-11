@@ -1,0 +1,23 @@
+# SawitOS Git Ignore Rules
+
+# Binaries & build output
+bin/
+*.exe
+*.test
+*.prof
+
+# Node & Next.js frontend
+node_modules/
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+
+# Logs & temp
+*.log
+/var/log/sawit/
+/run/sawit/
+tmp/
+scratch/
+.DS_Store
+Thumbs.db
