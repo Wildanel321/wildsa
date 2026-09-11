@@ -90,6 +90,7 @@ func main() {
 	mux.HandleFunc("/api/v1/profiles", handleProfilesList)
 	mux.HandleFunc("/api/v1/profiles/apply", handleProfileApply)
 	mux.HandleFunc("/api/v1/ws", func(w http.ResponseWriter, r *http.Request) { wsHub.ServeWebSocket(w, r) })
+	mux.HandleFunc("/", handleWebOrStatic)
 
 	// Wrap router with AuthMiddleware
 	handler := auth.AuthMiddleware(mux)

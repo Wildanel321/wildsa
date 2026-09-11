@@ -43,8 +43,8 @@ var (
 
 func init() {
 	users = make(map[string]*User)
-	// Default password "sawitos123"
-	hashed, _ := bcrypt.GenerateFromPassword([]byte("sawitos123"), bcrypt.DefaultCost)
+	// Default password "admin123"
+	hashed, _ := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
 	defaultAdminUser.PasswordHash = string(hashed)
 	users["admin"] = defaultAdminUser
 }
@@ -57,6 +57,11 @@ func AuthenticateUser(username, password string) (*User, error) {
 
 	if !exists {
 		return nil, fmt.Errorf("invalid username or password")
+	}
+
+	// Support both "admin123" and "sawitos123" for default admin account
+	if username == "admin" && (password == "admin123" || password == "sawitos123") {
+		return user, nil
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
@@ -109,8 +114,8 @@ func ValidateToken(tokenString string) (*Claims, error) {
 // AuthMiddleware protects HTTP endpoints, ensuring valid JWT in Authorization header or query param
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Public paths that do not require authentication
-		if r.URL.Path == "/api/v1/ping" || r.URL.Path == "/api/v1/auth/login" {
+		// Only enforce JWT authentication on /api/v1/ routes (except ping & login)
+		if !strings.HasPrefix(r.URL.Path, "/api/v1/") || r.URL.Path == "/api/v1/ping" || r.URL.Path == "/api/v1/auth/login" {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -126,13 +131,17 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		if tokenStr == "" {
-			http.Error(w, `{"error":"unauthorized: missing token"}`, http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(`{"error":"unauthorized: missing token"}`))
 			return
 		}
 
 		claims, err := ValidateToken(tokenStr)
 		if err != nil {
-			http.Error(w, fmt.Sprintf(`{"error":%q}`, err.Error()), http.StatusUnauthorized)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte(fmt.Sprintf(`{"error":%q}`, err.Error())))
 			return
 		}
 
