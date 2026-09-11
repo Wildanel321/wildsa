@@ -1,0 +1,24 @@
+# SawitOS Default Security Configuration Policy
+version: "1.0"
+
+ssh:
+  permit_root_login: false
+  password_authentication: true
+  port: 22
+
+firewall:
+  enabled: true
+  backend: "nftables"
+  default_policy: "drop"
+  allowed_ports:
+    - "22/tcp"   # SSH
+    - "80/tcp"   # Web UI HTTP
+    - "443/tcp"  # Web UI HTTPS
+
+updates:
+  automatic_security_updates: true
+  reboot_strategy: "manual" # manual | schedule
+
+audit:
+  enabled: true
+  log_file: "/var/log/sawit/audit.log"

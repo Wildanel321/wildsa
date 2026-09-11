@@ -1,0 +1,11 @@
+[Unit]
+Description=SawitOS System Health Inspector Service
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/sawit-health --check-all
+User=root
+
+[Install]
+WantedBy=multi-user.target

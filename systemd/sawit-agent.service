@@ -1,0 +1,17 @@
+[Unit]
+Description=SawitOS Privileged Operations Agent
+Before=sawitd.service
+Documentation=file:///usr/share/doc/sawitos/architecture.md
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/sawit-agent --socket /run/sawit/sawit-agent.sock
+Restart=always
+RestartSec=3s
+User=root
+Group=root
+RuntimeDirectory=sawit
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target

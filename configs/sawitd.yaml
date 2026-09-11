@@ -1,0 +1,29 @@
+# SawitOS Core Daemon Configuration (sawitd)
+version: "1.0"
+
+server:
+  host: "127.0.0.1"
+  port: 8080
+  tls_enabled: false
+  tls_cert: "/etc/sawit/ssl/sawit.crt"
+  tls_key: "/etc/sawit/ssl/sawit.key"
+
+ipc:
+  agent_socket: "/run/sawit/sawit-agent.sock"
+  timeout_seconds: 10
+
+logging:
+  level: "info" # debug, info, warn, error
+  file: "/var/log/sawit/sawitd.log"
+
+health:
+  interval_seconds: 30
+  cpu_warning_percent: 85.0
+  cpu_critical_percent: 95.0
+  memory_warning_percent: 85.0
+  memory_critical_percent: 95.0
+  disk_warning_percent: 85.0
+  disk_critical_percent: 95.0
+
+security:
+  policy_file: "/etc/sawit/security.yaml"

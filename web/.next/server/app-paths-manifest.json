@@ -1,0 +1,13 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/login/page": "app/login/page.js",
+  "/containers/page": "app/containers/page.js",
+  "/network/page": "app/network/page.js",
+  "/logs/page": "app/logs/page.js",
+  "/page": "app/page.js",
+  "/packages/page": "app/packages/page.js",
+  "/security/page": "app/security/page.js",
+  "/settings/page": "app/settings/page.js",
+  "/storage/page": "app/storage/page.js",
+  "/services/page": "app/services/page.js"
+}
