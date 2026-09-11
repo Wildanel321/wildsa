@@ -1,7 +1,7 @@
 # SawitOS Git Ignore Rules
 
-# Binaries & build output
-bin/
+# Binaries & build output (keep release binaries in bin/ for curl installer)
+!bin/sawit*-linux-*
 *.exe
 *.test
 *.prof

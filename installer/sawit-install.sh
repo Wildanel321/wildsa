@@ -86,6 +86,8 @@ elif [ -f "./bin/sawitctl-linux-${BINARY_ARCH}" ]; then
     BIN_SRC="./bin"
 fi
 
+RAW_BASE_URL="https://raw.githubusercontent.com/Wildanel321/wildsa/main/bin"
+
 if [ -n "${BIN_SRC}" ]; then
     echo "[+] Found pre-compiled binaries in ${BIN_SRC}"
     for b in sawitctl sawitd sawit-agent sawit-health sawit-update; do
@@ -100,7 +102,27 @@ if [ -n "${BIN_SRC}" ]; then
         fi
     done
 else
-    echo "[!] Notice: Pre-compiled binaries not found in ./bin/. Run 'make build' or 'make build-armv7' (for Pi 3 32-bit) / 'make build-arm64' (for Pi 3 64-bit)"
+    echo "[+] Remote installation mode: Downloading binaries for ${BINARY_ARCH} from GitHub..."
+    for b in sawitctl sawitd sawit-agent sawit-health sawit-update; do
+        DOWNLOAD_URL="${RAW_BASE_URL}/${b}-linux-${BINARY_ARCH}"
+        echo "    [+] Downloading ${b}-linux-${BINARY_ARCH}..."
+        if command -v curl >/dev/null 2>&1; then
+            curl -fsSL "${DOWNLOAD_URL}" -o "${INSTALL_PREFIX}/${b}" || {
+                echo "    [!] Failed downloading ${b} from ${DOWNLOAD_URL}" >&2
+                exit 1
+            }
+        elif command -v wget >/dev/null 2>&1; then
+            wget -qO "${INSTALL_PREFIX}/${b}" "${DOWNLOAD_URL}" || {
+                echo "    [!] Failed downloading ${b} from ${DOWNLOAD_URL}" >&2
+                exit 1
+            }
+        else
+            echo "    [!] Error: curl or wget is required to download binaries." >&2
+            exit 1
+        fi
+        chmod 0755 "${INSTALL_PREFIX}/${b}"
+        echo "    [✓] Installed ${b}"
+    done
 fi
 
 # Create default configuration files if not present
