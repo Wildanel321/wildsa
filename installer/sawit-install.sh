@@ -86,11 +86,17 @@ elif [ -f "./bin/sawitctl-linux-${BINARY_ARCH}" ]; then
     BIN_SRC="./bin"
 fi
 
+# Stop existing services before binary installation to avoid "text file busy" write errors
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl stop sawitd sawit-agent sawit-health >/dev/null 2>&1 || true
+fi
+
 RAW_BASE_URL="https://raw.githubusercontent.com/Wildanel321/wildsa/main/bin"
 
 if [ -n "${BIN_SRC}" ]; then
     echo "[+] Found pre-compiled binaries in ${BIN_SRC}"
     for b in sawitctl sawitd sawit-agent sawit-health sawit-update; do
+        rm -f "${INSTALL_PREFIX}/${b}"
         if [ -f "${BIN_SRC}/${b}" ]; then
             cp "${BIN_SRC}/${b}" "${INSTALL_PREFIX}/${b}"
             chmod 0755 "${INSTALL_PREFIX}/${b}"
@@ -106,6 +112,7 @@ else
     for b in sawitctl sawitd sawit-agent sawit-health sawit-update; do
         DOWNLOAD_URL="${RAW_BASE_URL}/${b}-linux-${BINARY_ARCH}"
         echo "    [+] Downloading ${b}-linux-${BINARY_ARCH}..."
+        rm -f "${INSTALL_PREFIX}/${b}"
         if command -v curl >/dev/null 2>&1; then
             curl -fsSL "${DOWNLOAD_URL}" -o "${INSTALL_PREFIX}/${b}" || {
                 echo "    [!] Failed downloading ${b} from ${DOWNLOAD_URL}" >&2
