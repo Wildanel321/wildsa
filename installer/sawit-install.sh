@@ -212,10 +212,11 @@ ExecStart=${INSTALL_PREFIX}/sawit-health
 WantedBy=multi-user.target
 EOF
 
-# Reload systemd daemon
+# Reload systemd daemon & start services automatically
 if command -v systemctl >/dev/null 2>&1; then
     systemctl daemon-reload
     systemctl enable sawit-agent sawitd sawit-health >/dev/null 2>&1 || true
+    systemctl restart sawit-agent sawitd >/dev/null 2>&1 || true
 fi
 
 echo "================================================================"
